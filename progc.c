@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 //Code en C pour le Traitement T:
 
 #include <stdio.h>
@@ -142,6 +138,17 @@ void obtenirVillesPlusTraversees(Ville *node, Ville *villesPlusTraversees[],
   obtenirVillesPlusTraversees(node->droite, villesPlusTraversees, compteurTop);
 }
 
+// Fonction pour libérer la mémoire de l'arbre AVL
+void libererMemoire(Ville *node) {
+    if (node == NULL) {
+        return;
+    }
+
+    libererMemoire(node->gauche);
+    libererMemoire(node->droite);
+    free(node);
+}
+
 int main() {
   FILE *fichier = fopen("data.csv", "r");
   if (fichier == NULL) {
@@ -194,6 +201,7 @@ int main() {
     printf("%s : %d traversées\n", villesPlusTraversees[i]->nom,
            villesPlusTraversees[i]->traverses);
   }
+    libererMemoire(racine);
 
   return 0;
 }
