@@ -1,5 +1,3 @@
-//Code en C pour le Traitement T:
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,11 +22,11 @@ Ville *nouvelleVille(char *nom) {
 }
 
 // Fonction pour calculer la hauteur d'un nœud dans l'arbre AVL
-int hauteur(Ville *node) {
-  if (node == NULL) {
+int hauteur(Ville *noeud) {
+  if (noeud == NULL) {
     return 0;
   }
-  return node->hauteur;
+  return noeud->hauteur;
 }
 
 // Fonction pour obtenir le maximum de deux entiers
@@ -63,98 +61,112 @@ Ville *rotationGauche(Ville *x) {
 }
 
 // Obtenir le facteur d'équilibrage d'un nœud
-int getBalance(Ville *node) {
-  if (node == NULL) {
+int getBalance(Ville *noeud) {
+  if (noeud == NULL) {
     return 0;
   }
-  return hauteur(node->gauche) - hauteur(node->droite);
+  return hauteur(noeud->gauche) - hauteur(noeud->droite);
 }
 
 // Insérer une ville dans l'arbre AVL
-Ville *insererVille(Ville *node, char *nom) {
-  if (node == NULL) {
+Ville *insererVille(Ville *noeud, char *nom) {
+  if (noeud == NULL) {
     return nouvelleVille(nom);
   }
 
-  int compareResult = strcmp(nom, node->nom);
+  int compareResult = strcmp(nom, noeud->nom);
 
   if (compareResult < 0) {
-    node->gauche = insererVille(node->gauche, nom);
+    noeud->gauche = insererVille(noeud->gauche, nom);
   } else if (compareResult > 0) {
-    node->droite = insererVille(node->droite, nom);
+    noeud->droite = insererVille(noeud->droite, nom);
   } else {
-    node->traverses++;
-    return node;
+    noeud->traverses++;
+    return noeud;
   }
 
-  node->hauteur = 1 + max(hauteur(node->gauche), hauteur(node->droite));
+  noeud->hauteur = 1 + max(hauteur(noeud->gauche), hauteur(noeud->droite));
 
-  int balance = getBalance(node);
+  int balance = getBalance(noeud);
 
-  if (balance > 1 && strcmp(nom, node->gauche->nom) < 0) {
-    return rotationDroite(node);
+  if (balance > 1 && strcmp(nom, noeud->gauche->nom) < 0) {
+    return rotationDroite(noeud);
   }
 
-  if (balance < -1 && strcmp(nom, node->droite->nom) > 0) {
-    return rotationGauche(node);
+  if (balance < -1 && strcmp(nom, noeud->droite->nom) > 0) {
+    return rotationGauche(noeud);
   }
 
-  if (balance > 1 && strcmp(nom, node->gauche->nom) > 0) {
-    node->gauche = rotationGauche(node->gauche);
-    return rotationDroite(node);
+  if (balance > 1 && strcmp(nom, noeud->gauche->nom) > 0) {
+    noeud->gauche = rotationGauche(noeud->gauche);
+    return rotationDroite(noeud);
   }
 
-  if (balance < -1 && strcmp(nom, node->droite->nom) < 0) {
-    node->droite = rotationDroite(node->droite);
-    return rotationGauche(node);
+  if (balance < -1 && strcmp(nom, noeud->droite->nom) < 0) {
+    noeud->droite = rotationDroite(noeud->droite);
+    return rotationGauche(noeud);
   }
 
-  return node;
+  return noeud;
 }
 
 // Fonction récursive pour parcourir l'arbre et obtenir les villes les plus
 // traversées
-void obtenirVillesPlusTraversees(Ville *node, Ville *villesPlusTraversees[],
+void obtenirVillesPlusTraversees(Ville *noeud, Ville *villesPlusTraversees[],
                                  int *compteurTop) {
-  if (node == NULL || *compteurTop >= 10) {
+  if (noeud == NULL || *compteurTop >= 10) {
     return;
   }
 
-  obtenirVillesPlusTraversees(node->gauche, villesPlusTraversees, compteurTop);
+  obtenirVillesPlusTraversees(noeud->gauche, villesPlusTraversees, compteurTop);
 
   int i;
   for (i = 0; i < *compteurTop; ++i) {
-    if (strcmp(node->nom, villesPlusTraversees[i]->nom) == 0) {
-      villesPlusTraversees[i]->traverses += node->traverses;
+    if (strcmp(noeud->nom, villesPlusTraversees[i]->nom) == 0) {
+      villesPlusTraversees[i]->traverses += noeud->traverses;
       break;
     }
   }
 
   if (i == *compteurTop) {
-    villesPlusTraversees[*compteurTop] = node;
+    villesPlusTraversees[*compteurTop] = noeud;
     (*compteurTop)++;
   }
 
-  obtenirVillesPlusTraversees(node->droite, villesPlusTraversees, compteurTop);
+  obtenirVillesPlusTraversees(noeud->droite, villesPlusTraversees, compteurTop);
 }
 
+// Fonction pour imprimer les 10 villes les plus traversées dans un fichier
+void imprimerTop10Villes(FILE *fichier, Ville **villesPlusTraversees, int compteurTop) {
+    fprintf(fichier, "ID, nom, traversees :\n");
+    for (int i = 0; i < compteurTop && i < 10; i++) {
+        fprintf(fichier, "%d,%d,%s\n", i, villesPlusTraversees[i]->traverses,villesPlusTraversees[i]->nom);
+    }
+}
 // Fonction pour libérer la mémoire de l'arbre AVL
-void libererMemoire(Ville *node) {
-    if (node == NULL) {
+void libererMemoire(Ville *noeud) {
+    if (noeud == NULL) {
         return;
     }
 
-    libererMemoire(node->gauche);
-    libererMemoire(node->droite);
-    free(node);
+    libererMemoire(noeud->gauche);
+    libererMemoire(noeud->droite);
+    free(noeud);
 }
 
-int main() {
-  FILE *fichier = fopen("data.csv", "r");
-  if (fichier == NULL) {
-    printf("Erreur lors de l'ouverture du fichier.\n");
-    return 1;
-  }
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
+        printf("Usage: %s <chemin_du_fichier>\n", argv[0]);
+        return 1;
+    }
+
+    const char *chemin_fichier = argv[1];
+    FILE *fichier = fopen(chemin_fichier, "r");
+
+    if (fichier == NULL) {
+        printf("Erreur lors de l'ouverture du fichier %s.\n", chemin_fichier);
+        return 1;
+    }
 
   char ligne[1000];
   Ville *racine = NULL;
@@ -196,11 +208,22 @@ int main() {
     }
   }
 
-  printf("Les 10 villes les plus traversées :\n");
-  for (int i = 0; i < compteurTop && i < 10; i++) {
-    printf("%s : %d traversées\n", villesPlusTraversees[i]->nom,
-           villesPlusTraversees[i]->traverses);
-  }
+
+
+  // Ouvrir le fichier en mode écriture
+    fichier = fopen("../temp/t.txt", "w");
+
+    // Vérifier si l'ouverture du fichier a réussi
+    if (fichier == NULL) {
+        printf("Erreur lors de l'ouverture du fichier.\n");
+        return 1; // Quitter le programme avec un code d'erreur
+    }
+
+    // Imprimer les 10 villes les plus traversées dans le fichier
+    imprimerTop10Villes(fichier, villesPlusTraversees, sizeof(villesPlusTraversees) / sizeof(villesPlusTraversees[0]));
+
+    // Fermer le fichier
+    fclose(fichier);
     libererMemoire(racine);
 
   return 0;
