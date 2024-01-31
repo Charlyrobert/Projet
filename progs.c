@@ -1,13 +1,11 @@
-// Code en C pour le traitement S 
-
+//Code en C pour le traitement S
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
 #include <stdbool.h>
 
-
-// Structure pour les nœuds de l'arbre AVL basé sur la distance
+// Structure for nodes in the AVL tree based on distance
 typedef struct DistanceNode {
     float distance;
     struct DistanceNode *left;
@@ -15,7 +13,7 @@ typedef struct DistanceNode {
     int height;
 } DistanceNode;
 
-// Structure des noeuds de notre arbre final (trié par Max-Min)
+// Structure for nodes in the final tree (sorted by Max-Min)
 typedef struct MaxMinNode {
     float maxMinusMin;
     struct MaxMinNode *left;
@@ -27,8 +25,7 @@ typedef struct MaxMinNode {
     float average;
 } MaxMinNode;
 
-
-// Structure pour les nœuds de l'arbre AVL basé sur le routeID (Arbre initial)
+// Structure for nodes in the AVL tree based on routeID (Initial tree)
 typedef struct RouteNode {
     int routeID;
     DistanceNode *distanceTree; 
@@ -37,49 +34,48 @@ typedef struct RouteNode {
     int height;
 } RouteNode;
 
+/// INITIAL TREE SECTION ///
 
-/// PARTIE ARBRE INITIAL /////
-
-// Fonction pour parcourir l'arbre AVL distance et trouver la distance minimale
+// Function to traverse the AVL tree based on distance and find the minimum distance
 float minNode(DistanceNode *node) {
     if (node == NULL)
         return DBL_MAX; 
 
-    // Descendre toujours vers la gauche
+    // Always move to the left
     while (node->left != NULL)
         node = node->left;
 
-    // Le nœud actuel est le nœud le plus à gauche, contenant la distance minimale
+    // Current node is the leftmost node, containing the minimum distance
     return node->distance;
 }
 
-// Fonction pour parcourir l'arbre AVL distance et trouver la distance maximale
+// Function to traverse the AVL tree based on distance and find the maximum distance
 float maxNode(DistanceNode *node) {
     if (node == NULL)
         return FLT_MIN; 
 
-    // Descendre toujours vers la droite
+    // Always move to the right
     while (node->right != NULL)
         node = node->right;
 
-    // Le nœud actuel est le nœud le plus à droite, contenant la distance maximale
+    // Current node is the rightmost node, containing the maximum distance
     return node->distance;
 }
 
-// Fonction récursive pour calculer la somme des distances au sein d'un noeud RouteID
+// Recursive function to calculate the sum of distances within a RouteID node
 float distanceSum(DistanceNode *node) {
     if (node == NULL)
         return 0;
 
-    // Somme des distances dans les sous-arbres gauche et droit
+    // Sum of distances in the left and right subtrees
     float sumLeft = distanceSum(node->left);
     float sumRight = distanceSum(node->right);
 
-    // Ajouter la distance du nœud actuel
+    // Add the distance of the current node
     return sumLeft + sumRight + node->distance;
 }
 
-// Fonction pour compter le nombre de noeud routeID (on compte le nombre d'étape d'un trajet)
+// Function to count the number of RouteID nodes (counting the number of steps in a trip)
 int countNodes(DistanceNode *node, int* nodeCount){
     if (node != NULL) {
         (*nodeCount)++;
@@ -89,12 +85,10 @@ int countNodes(DistanceNode *node, int* nodeCount){
     return *nodeCount;
 }
 
-// Fonction pour calculer la moyenne des distances d'un trajet
+// Function to calculate the average distance of a trip
 float distanceAvg(DistanceNode *node) {
-
- 
     int count = 0;
-    count = countNodes(node, &count); //Compter le nombre d'étape
+    count = countNodes(node, &count); // Count the number of steps
 
     if (count == 0)
         return 0; 
@@ -103,20 +97,18 @@ float distanceAvg(DistanceNode *node) {
     return sum / count; 
 }
 
-
-// Fonction pour obtenir la hauteur de l'arbre (RouteID)
+// Function to get the height of the tree (RouteID)
 int routeHeight(RouteNode *N) {
     if (N == NULL)
         return 0;
     return N->height;
 }
 
-
 int routeMax(int a, int b) {
     return (a > b) ? a : b;
 }
 
-// Fonction pour créer un nouveau nœud
+// Function to create a new node
 DistanceNode* newDistanceNode(float distance) {
     DistanceNode* node = (DistanceNode*) malloc(sizeof(DistanceNode));
     node->distance = distance;
@@ -126,19 +118,18 @@ DistanceNode* newDistanceNode(float distance) {
     return node;
 }
 
-// Fonction pour obtenir la hauteur de l'arbre
+// Function to get the height of the tree
 int distanceHeight(DistanceNode *N) {
     if (N == NULL)
         return 0;
     return N->height;
 }
 
-
 int distanceMax(int a, int b) {
     return (a > b) ? a : b;
 }
 
-// Rotation droite 
+// Right Rotation 
 DistanceNode *distanceRightRotate(DistanceNode *y) {
     DistanceNode *x = y->left;
     DistanceNode *T2 = x->right;
@@ -149,11 +140,10 @@ DistanceNode *distanceRightRotate(DistanceNode *y) {
     y->height = distanceMax(distanceHeight(y->left), distanceHeight(y->right)) + 1;
     x->height = distanceMax(distanceHeight(x->left), distanceHeight(x->right)) + 1;
 
- 
     return x;
 }
 
-// Rotation gauche 
+// Left Rotation 
 DistanceNode *distanceLeftRotate(DistanceNode *x) {
     DistanceNode *y = x->right;
     DistanceNode *T2 = y->left;
@@ -167,16 +157,16 @@ DistanceNode *distanceLeftRotate(DistanceNode *x) {
     return y;
 }
 
-// Obtenir l'équilibre d'un nœud 
+// Get the balance of a node 
 int distanceGetBalance(DistanceNode *N) {
     if (N == NULL)
         return 0;
     return distanceHeight(N->left) - distanceHeight(N->right);
 }
 
-// Fonction pour insérer un noeud dans l'arbre des étapes
+// Function to insert a node into the steps tree
 DistanceNode* distanceInsert(DistanceNode* node, float distance) {
-    // Étape 1 : Insertion BST normale
+    // Step 1: Normal BST insertion
     if (node == NULL)
         return newDistanceNode(distance);
 
@@ -187,29 +177,29 @@ DistanceNode* distanceInsert(DistanceNode* node, float distance) {
     else
         return node; 
 
-    // Mettre à jour la hauteur 
+    // Update the height 
     node->height = distanceMax(distanceHeight(node->left), distanceHeight(node->right)) + 1;
 
-    // Obtenir le facteur d'équilibre de ce nœud pour vérifier s'il est déséquilibré
+    // Get the balance factor of this node to check if it is unbalanced
     int balance = distanceGetBalance(node);
 
-    // Gérer les cas de déséquilibre
+    // Handle unbalance cases
 
-    // Cas gauche gauche
+    // Left Left Case
     if (balance > 1 && distance < node->left->distance)
         return distanceRightRotate(node);
 
-    // Cas gauche droite
+    // Left Right Case
     if (balance > 1 && distance > node->left->distance) {
         node->left = distanceLeftRotate(node->left);
         return distanceRightRotate(node);
     }
 
-    // Cas droite droite
+    // Right Right Case
     if (balance < -1 && distance > node->right->distance)
         return distanceLeftRotate(node);
 
-    // Cas droite gauche
+    // Right Left Case
     if (balance < -1 && distance < node->right->distance) {
         node->right = distanceRightRotate(node->right);
         return distanceLeftRotate(node);
@@ -218,12 +208,12 @@ DistanceNode* distanceInsert(DistanceNode* node, float distance) {
     return node;
 }
 
-
+// Function to create a new RouteNode
 RouteNode* newRouteNode(int routeID, float distance) {
     RouteNode* newNode = (RouteNode*)malloc(sizeof(RouteNode));
     if (newNode == NULL) {
 
-        fprintf(stderr, "Échec de l'allocation mémoire pour le nouveau nœud RouteNode\n");
+        fprintf(stderr, "Memory allocation failure for new RouteNode\n");
         exit(1); 
     }
     
@@ -237,29 +227,25 @@ RouteNode* newRouteNode(int routeID, float distance) {
     return newNode;
 }
 
-// Rotation droite 
+// Right Rotation 
 RouteNode *routeRightRotate(RouteNode *y) {
     RouteNode *x = y->left;
     RouteNode *T2 = x->right;
 
-
     x->right = y;
     y->left = T2;
 
-    
     y->height = routeMax(routeHeight(y->left), routeHeight(y->right)) + 1;
     x->height = routeMax(routeHeight(x->left), routeHeight(x->right)) + 1;
-
 
     return x;
 }
 
-// Rotation gauche 
+// Left Rotation 
 RouteNode *routeLeftRotate(RouteNode *x) {
     RouteNode *y = x->right;
     RouteNode *T2 = y->left;
 
- 
     y->left = x;
     x->right = T2;
 
@@ -269,14 +255,14 @@ RouteNode *routeLeftRotate(RouteNode *x) {
     return y;
 }
 
-// Obtenir l'équilibre d'un nœud
+// Get the balance of a node
 int routeGetBalance(RouteNode *N) {
     if (N == NULL)
         return 0;
     return routeHeight(N->left) - routeHeight(N->right);
 }
 
-// Fonction pour insérer un noeud (RouteID)
+// Function to insert a node (RouteID)
 RouteNode* routeInsert(RouteNode* node, int routeID, float distance) {
     if (node == NULL)
         return newRouteNode(routeID,distance);
@@ -286,111 +272,106 @@ RouteNode* routeInsert(RouteNode* node, int routeID, float distance) {
     else if (routeID > node->routeID)
         node->right = routeInsert(node->right, routeID, distance);
     else {
-        // Le routeID existe déjà, alors on insère la distance dans l'arbre AVL basé sur la distance
+        // RouteID already exists, so insert the distance into the AVL tree based on distance
         node->distanceTree = distanceInsert(node->distanceTree, distance);
-        return node; // Aucun besoin de rééquilibrer car le routeID n'a pas changé
+        return node; // No need to rebalance as RouteID has not changed
     }
 
-    // Mettre à jour la hauteur de ce nœud ancêtre
+    // Update the height of this ancestor node
     node->height = routeMax(routeHeight(node->left), routeHeight(node->right)) + 1;
 
-    // Obtenir le facteur d'équilibre de ce nœud pour vérifier s'il est déséquilibré
+    // Get the balance factor of this ancestor node to check if it is unbalanced
     int balance = routeGetBalance(node);
 
-    // Gérer les cas de déséquilibre
+    // Handle unbalance cases
 
-    // Cas gauche gauche
+    // Left Left Case
     if (balance > 1 && routeID < node->left->routeID)
         return routeRightRotate(node);
 
-    // Cas gauche droite
+    // Left Right Case
     if (balance > 1 && routeID > node->left->routeID) {
         node->left = routeLeftRotate(node->left);
         return routeRightRotate(node);
     }
 
-    // Cas droite droite
+    // Right Right Case
     if (balance < -1 && routeID > node->right->routeID)
         return routeLeftRotate(node);
 
-    // Cas droite gauche
+    // Right Left Case
     if (balance < -1 && routeID < node->right->routeID) {
         node->right = routeRightRotate(node->right);
         return routeLeftRotate(node);
     }
 
-
     return node;
 }
 
-//// FIN PARTIE ABRE INITIAL //////
+/// END INITIAL TREE SECTION ///
 
+/// START FINAL TREE SECTION ///
 
-//// DEBUT PARTIE ARBRE FINAL ////
-
-
-// Fonction pour obtenir la hauteur de l'arbre AVL basé sur le routeID
+// Function to get the height of the AVL tree based on routeID
 int MinMaxHeight(MaxMinNode *N) {
     if (N == NULL)
         return 0;
     return N->height;
 }
 
-
-// Fonction pour obtenir le maximum de deux nombres
+// Function to get the maximum of two numbers
 int MinMaxMax(int a, int b) {
     return (a > b) ? a : b;
 }
 
-// Obtenir l'équilibre d'un nœud de l'arbre AVL basé sur la distance
+// Get the balance of a node in the AVL tree based on distance
 int MinMaxGetBalance(MaxMinNode *N) {
     if (N == NULL)
         return 0;
     return MinMaxHeight(N->left) - MinMaxHeight(N->right);
 }
 
-// Fonction pour effectuer une rotation à droite dans l'arbre AVL basé sur max - min
+// Function to perform right rotation in the AVL tree based on max - min
 MaxMinNode *MinMaxRightRotate(MaxMinNode *y) {
     MaxMinNode *x = y->left;
     MaxMinNode *T2 = x->right;
 
-    // Effectuer la rotation
+    // Perform rotation
     x->right = y;
     y->left = T2;
 
-    // Mettre à jour les hauteurs
+    // Update heights
     y->height = MinMaxMax(MinMaxHeight(y->left), MinMaxHeight(y->right)) + 1;
     x->height = MinMaxMax(MinMaxHeight(x->left), MinMaxHeight(x->right)) + 1;
 
     return x;
 }
 
-// Fonction pour effectuer une rotation à gauche dans l'arbre AVL basé sur max - min
+// Function to perform left rotation in the AVL tree based on max - min
 MaxMinNode *MinMaxLeftRotate(MaxMinNode *x) {
     MaxMinNode *y = x->right;
     MaxMinNode *T2 = y->left;
 
-    // Effectuer la rotation
+    // Perform rotation
     y->left = x;
     x->right = T2;
 
-    // Mettre à jour les hauteurs
+    // Update heights
     x->height = MinMaxMax(MinMaxHeight(x->left), MinMaxHeight(x->right)) + 1;
     y->height = MinMaxMax(MinMaxHeight(y->left), MinMaxHeight(y->right)) + 1;
 
     return y;
 }
 
-
-// Fonction pour insérer un maxMinusMin dans l'arbre AVL basé sur max - min
+// Function to insert a maxMinusMin into the AVL tree based on max - min
 MaxMinNode* maxMinInsert(MaxMinNode* node, int routeID, float maxMinusMin, float max, float min, float average) {
-    // Insertion BST normale
+    // Normal BST insertion
     if (node == NULL) {
         MaxMinNode* newNode = (MaxMinNode*)malloc(sizeof(MaxMinNode));
         if (newNode == NULL) {
-            // Gérer l'échec de l'allocation mémoire
-            fprintf(stderr, "Échec de l'allocation mémoire pour le nouveau nœud MaxMinNode\n");
-            exit(1); // Ou gérer l'erreur de manière appropriée
+            // Handle memory allocation failure
+            fprintf(stderr, "Memory allocation failure for new MaxMinNode\n");
+            exit(1); 
         }
         newNode->routeID = routeID;
         newNode->maxMinusMin = maxMinusMin;
@@ -411,29 +392,29 @@ MaxMinNode* maxMinInsert(MaxMinNode* node, int routeID, float maxMinusMin, float
         return node;
     }
 
-    // Mettre à jour la hauteur de ce nœud ancêtre
+    // Update the height of this ancestor node
     node->height = MinMaxMax(MinMaxHeight(node->left), MinMaxHeight(node->right)) + 1;
 
-    // Obtenir le facteur d'équilibre de ce nœud ancêtre pour vérifier s'il est déséquilibré
+    // Get the balance factor of this ancestor node to check if it is unbalanced
     int balance = MinMaxGetBalance(node);
 
-    // Gérer les cas de déséquilibre (rotation gauche et droite)
+    // Handle unbalance cases (left and right rotation)
 
-    // Cas gauche gauche
+    // Left Left Case
     if (balance > 1 && maxMinusMin < node->left->maxMinusMin)
         return MinMaxRightRotate(node);
 
-    // Cas gauche droite
+    // Left Right Case
     if (balance > 1 && maxMinusMin > node->left->maxMinusMin) {
         node->left = MinMaxLeftRotate(node->left);
         return MinMaxRightRotate(node);
     }
 
-    // Cas droite droite
+    // Right Right Case
     if (balance < -1 && maxMinusMin > node->right->maxMinusMin)
         return MinMaxLeftRotate(node);
 
-    // Cas droite gauche
+    // Right Left Case
     if (balance < -1 && maxMinusMin < node->right->maxMinusMin) {
         node->right = MinMaxRightRotate(node->right);
         return MinMaxLeftRotate(node);
@@ -442,48 +423,44 @@ MaxMinNode* maxMinInsert(MaxMinNode* node, int routeID, float maxMinusMin, float
     return node;
 }
 
-// Fonction pour insérer un noeud dans l'arbre final
+// Function to insert a node into the final tree
 void insertStatsInMaxMinTree(MaxMinNode** maxMinTree, RouteNode* routeNode) {
 
-    // Calculer max, min, average et max - min pour la routeNode
+    // Calculate max, min, average, and max - min for the routeNode
     double minDist = minNode(routeNode->distanceTree);
     float maxDist = maxNode(routeNode->distanceTree);
     float avgDist = distanceAvg(routeNode->distanceTree);
     float maxMinusMin = maxDist - minDist;
 
-    // Insérer les statistiques dans l'arbre AVL basé sur max - min
+    // Insert the statistics into the AVL tree based on max - min
     *maxMinTree = maxMinInsert(*maxMinTree, routeNode->routeID, maxMinusMin, maxDist, minDist, avgDist);
 }
 
-
-
-// Fonction pour calculer les statistiques de distance pour chaque route et les insérer dans l'arbre AVL basé sur max - min
+// Function to calculate distance statistics for each route and insert them into the AVL tree based on max - min
 MaxMinNode* calculateAndInsertRouteDistanceStats(RouteNode *node, MaxMinNode* maxMinRoot) {
     if (node == NULL)
         return maxMinRoot;
 
-    // Calculer les statistiques pour le sous-arbre gauche 
+    // Calculate statistics for the left subtree 
     maxMinRoot = calculateAndInsertRouteDistanceStats(node->left, maxMinRoot);
 
-    // Calculer les statistiques pour le sous-arbre droit
+    // Calculate statistics for the right subtree
     maxMinRoot = calculateAndInsertRouteDistanceStats(node->right, maxMinRoot);
 
     double minDist = minNode(node->distanceTree);
     float maxDist = maxNode(node->distanceTree);
     float avgDist = distanceAvg(node->distanceTree);
 
-   
     maxMinRoot = maxMinInsert(maxMinRoot, node->routeID, maxDist - minDist, maxDist, minDist, avgDist);
 
     return maxMinRoot;
 }
 
-
-// Fonction pour sauvegarder les 50 premières valeurs dans un fichier txt
+// Function to save the top 50 values to a txt file
 void saveLargestValuesToFile(MaxMinNode* largestValues[], int k, const char* filename) {
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
-        fprintf(stderr, "Impossible d'ouvrir le fichier %s pour l'écriture\n", filename);
+        fprintf(stderr, "Unable to open file %s for writing\n", filename);
         return;
     }
 
@@ -497,39 +474,40 @@ void saveLargestValuesToFile(MaxMinNode* largestValues[], int k, const char* fil
     fclose(file);
 }
 
-
-// Fonction pour extraire les 50 valeurs qui nous intéressent 
+// Function to extract the top 50 values of interest 
 void reverseInOrderTraversal(MaxMinNode* node, MaxMinNode* values[], int* count, int k) {
     if (node == NULL || *count >= k)
         return;
 
-    // Parcours récursif du sous-arbre droit (valeurs plus grandes en premier)
+    // Recursive traversal of the right subtree (larger values first)
     reverseInOrderTraversal(node->right, values, count, k);
 
-    // Ajouter le nœud actuel à la liste des valeurs
+    // Add the current node to the values list
     if (*count < k) {
         values[*count] = node;
         (*count)++;
     }
 
-    // Parcours récursif du sous-arbre gauche
+    // Recursive traversal of the left subtree
     reverseInOrderTraversal(node->left, values, count, k);
 }
 
+/// END FINAL TREE SECTION ///
 
-//// FIN PARTIE ARBRE FINAL //////
-
-
-
-
-int main() {
+int main(int argc, char *argv[]) {
     RouteNode *root = NULL;
     MaxMinNode* maxMinRoot = NULL;
 
-    // Ouverture du fichier CSV
-    FILE *file = fopen("data.csv", "r");
-    if (!file) {
-        printf("Impossible d'ouvrir le fichier\n");
+    if (argc != 2) {
+        printf("Usage: %s <file_path>\n", argv[0]);
+        return 1;
+    }
+
+    const char *file_path = argv[1];
+    FILE *file = fopen(file_path, "r");
+
+    if (file == NULL) {
+        printf("Error opening file %s.\n", file_path);
         return 1;
     }
 
@@ -542,28 +520,28 @@ int main() {
 
          char *token = strtok(line, ";");
         if (token != NULL) {
-            // Extrait la première valeur (routeID)
+            // Extract the first value (routeID)
             sscanf(token, "%d", &routeID);
 
-            // Passe au prochain token
+            // Move to the next token
             token = strtok(NULL, ";");
             if (token != NULL) {
-                // Extrait la deuxième valeur (stepID)
+                // Extract the second value (stepID)
                 sscanf(token, "%d", &stepID);
 
-                // Passe au prochain token
+                // Move to the next token
                 token = strtok(NULL, ";");
                 token = strtok(NULL, ";");
                 token = strtok(NULL, ";");
                 if (token != NULL) {
-                    // Extrait la troisième valeur (distance)
+                    // Extract the third value (distance)
                     sscanf(token, "%f", &distance);
 
                   
-                    // Insérer les informations de trajet mises à jour dans l'arbre AVL
+                    // Insert the updated route information into the AVL tree
                     root = routeInsert(root, routeID, distance);
                 } else {
-                    printf("Erreur lors de l'analyse de la ligne : %s\n", line);
+                    printf("Error parsing line: %s\n", line);
                 }
             }
         }
@@ -578,8 +556,8 @@ int main() {
 
     reverseInOrderTraversal(maxMinRoot, largestValues, &count, k);
 
-    const char* filename = "50values.txt";
-    // Enregistrez les 50 plus grandes valeurs dans le fichier txt
+    const char* filename = "../temp/s.txt";
+    // Save the top 50 values to the txt file
     saveLargestValuesToFile(largestValues, k, filename);
 
     return 0;
