@@ -1,7 +1,7 @@
 
 
-Répartition des taches: 
-Je me suis occupé des traitements d1, d2, L et T et ce qui concernait gnuplot, Natan s'est chargé du traitement S et du makefile.
+Répartition des taches : Je me suis occupé des traitements d1, d2, L et T et ce qui concernait gnuplot, Natan s'est chargé du traitement S et du makefile.
+Planning : On a travaillé au fur et à mesure au cours du temps que l'on avait, surtout pendant les vacances de Noel et après les partiels.
 
 Tous les traitements fonctionnent, mais on n'a pas réussi à faire fonctionner l'ensemble en meme temps.
 
