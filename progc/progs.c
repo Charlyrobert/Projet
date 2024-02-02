@@ -34,8 +34,6 @@ typedef struct RouteNode {
     int height;
 } RouteNode;
 
-/// INITIAL TREE SECTION ///
-
 // Function to traverse the AVL tree based on distance and find the minimum distance
 float minNode(DistanceNode *node) {
     if (node == NULL)
@@ -308,10 +306,6 @@ RouteNode* routeInsert(RouteNode* node, int routeID, float distance) {
     return node;
 }
 
-/// END INITIAL TREE SECTION ///
-
-/// START FINAL TREE SECTION ///
-
 // Function to get the height of the AVL tree based on routeID
 int MinMaxHeight(MaxMinNode *N) {
     if (N == NULL)
@@ -492,7 +486,9 @@ void reverseInOrderTraversal(MaxMinNode* node, MaxMinNode* values[], int* count,
     reverseInOrderTraversal(node->left, values, count, k);
 }
 
-/// END FINAL TREE SECTION ///
+
+
+
 
 int main(int argc, char *argv[]) {
     RouteNode *root = NULL;
