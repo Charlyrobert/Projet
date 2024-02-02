@@ -1,4 +1,10 @@
 Répartition des taches:
-Charly : Traitements d1,d2,L,T et gnuplots
-Natan : Traitement S, makefile et gnuplots
+Je me suis occupé des traitements d1, d2, L et T et des gnuplots, Natan s'est chargé du Traitement S et du makefile.
+
+
+
+
+
+
+
 
