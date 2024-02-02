@@ -1,15 +1,11 @@
 #!/bin/bash
 
-# Nom du fichier source C à adapter
 fichier_source="progcs.c"
 
-# Nom du fichier exécutable à adapter
 fichier_executable="progcs"
 
-# Chemin du fichier data.csv à adapter
 chemin_data_csv="chemin/vers/data.csv"
 
-# Compiler le fichier source C avec GCC (sous Linux/macOS)
 gcc -o "$fichier_executable" "$fichier_source"
 
 # Vérifier si la compilation a réussi
