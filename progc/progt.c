@@ -111,8 +111,7 @@ Ville *insererVille(Ville *noeud, char *nom) {
   return noeud;
 }
 
-// Fonction récursive pour parcourir l'arbre et obtenir les villes les plus
-// traversées
+// Fonction récursive pour parcourir l'arbre et obtenir les villes les plus traversées
 void obtenirVillesPlusTraversees(Ville *noeud, Ville *villesPlusTraversees[],
                                  int *compteurTop) {
   if (noeud == NULL || *compteurTop >= 10) {
