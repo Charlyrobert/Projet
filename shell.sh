@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Chemin du fichier CSV
+csv_file="$1"
+
 # Fonction d'affichage de l'aide
 print_help() {
   echo "Usage: $0 <chemin_fichier_csv> [options]"
@@ -9,7 +12,7 @@ print_help() {
   echo "  -d2          Effectuer le traitement D2"
   echo "  -l           Effectuer le traitement L"
   echo "  -t           Effectuer le traitement T"
-  echo "  -s          Effectuer le traitement s"
+  echo "  -s          Effectuer le traitement S"
 }
 
 # Mesure du temps avant le traitement
